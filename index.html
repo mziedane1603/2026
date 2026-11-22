@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arab Pharmacists 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f1eee5;--card:#faf8f1;--tx:#2b3630;--mu:#738077;--ac:#4d7c66;--ln:#e4e0d2;--bad:#b87a63}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#131d18;--card:#1a2721;--tx:#e3ebe5;--mu:#93a79b;--ac:#7fb59a;--ln:#2a3a31;--bad:#d9977f}}
+:root[data-theme=dark]{--bg:#131d18;--card:#1a2721;--tx:#e3ebe5;--mu:#93a79b;--ac:#7fb59a;--ln:#2a3a31;--bad:#d9977f}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit}html,body{height:100%;margin:0}body{height:100dvh}
+body{background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,sans-serif;display:flex;flex-direction:column}
+#bar{height:4px;background:var(--ln)}#bar i{display:block;height:100%;width:0;background:var(--ac)}
+header{display:flex;gap:8px;align-items:center;padding:10px 16px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;flex:1;color:var(--ac)}
+button,.b{font:inherit;background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:6px 12px;cursor:pointer}
+button:hover,.b:hover{border-color:var(--ac)}
+main{flex:1;min-height:0;padding:0 16px 8px;display:flex;flex-direction:column}
+.sl{flex:1;min-height:0;background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 30px #0001;animation:in .7s}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.sl h2{margin:0;font-size:22px;color:var(--ac)}
+.cv{flex:1;min-height:200px;position:relative}
+.cap{background:var(--bg);border-radius:12px;padding:10px 14px;line-height:1.8;font-size:15px}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;flex:1;align-content:center}
+.kp div{background:var(--bg);border-radius:16px;padding:18px;text-align:center}
+.kp b{display:block;font-size:34px;color:var(--ac);font-weight:800}.kp span{color:var(--mu)}
+.tw{overflow:auto;flex:1;min-height:0}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--ln);text-align:right;white-space:nowrap}th{color:var(--mu);font-weight:600}
+.up{color:var(--ac)}.dn{color:var(--bad)}.two{display:grid;gap:12px;flex:1;min-height:0;grid-template-rows:1fr 1fr}
+@media(min-width:900px){.two{grid-template-columns:1.2fr 1fr;grid-template-rows:none}}
+.tip{background:color-mix(in srgb,var(--ac) 13%,var(--card));border-right:4px solid var(--ac);border-radius:12px;padding:10px 14px;line-height:1.8;font-size:15px}
+@media(max-width:700px){header{padding:8px 10px}header h1{font-size:15px}#imp{font-size:13px;padding:5px 8px}main{padding:0 8px 6px}.sl{padding:12px;border-radius:16px;overflow-y:auto;gap:8px}.sl h2{font-size:18px}.cv{flex:none;height:290px;min-height:0}.cap,.tip{font-size:14px;padding:8px 10px}.kp{flex:none;gap:8px}.kp div{padding:12px}.kp b{font-size:24px}.two{display:flex;flex-direction:column}.two .cv{height:270px}.tw{flex:none}th,td{padding:5px 6px;font-size:12px}}
+footer{display:flex;gap:8px;justify-content:center;padding:8px;align-items:center}
+.dot{width:9px;height:9px;border-radius:9px;background:var(--ln)}.dot.on{background:var(--ac)}
+</style></head><body>
+<div id="bar"><i></i></div>
+<header><h1>🌿 Arab Pharmacists 2026</h1><span id="st" style="color:var(--mu);font-size:13px"></span>
+<button id="imp">📥 استيراد Excel</button><input type="file" id="fi" accept=".xlsx,.xls" hidden>
+<button id="rp">📄 تقرير الرواكد</button><button id="lbtn">🔐 أدمن</button><button id="seed">⬆️ بيانات أولية</button><input type="file" id="sf" multiple accept=".json" hidden><button id="lo">خروج</button><button id="th">🌓</button></header>
+<main id="m"></main>
+<div id="lg" style="position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:9"><div class="sl" style="flex:none;width:min(360px,92vw)"><h2>تسجيل الدخول</h2><input id="em" type="email" placeholder="الإيميل" style="font:inherit;padding:10px;border-radius:10px;border:1px solid var(--ln);background:var(--bg);color:var(--tx)"><input id="pw" type="password" placeholder="الباسورد" style="font:inherit;padding:10px;border-radius:10px;border:1px solid var(--ln);background:var(--bg);color:var(--tx)"><button id="lgb">دخول</button><button id="lcl">إلغاء</button><div id="lge" class="dn"></div></div></div>
+<footer><button id="pv">▶</button><button id="pp">⏸</button><button id="nx">◀</button><span id="dots" style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:60vw"></span></footer>
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import {getFirestore,doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+const app=initializeApp({apiKey:"AIzaSyDP2NRuoeqIlnMTtzkuvZs055PrHeAjZ-U",authDomain:"report-ee942.firebaseapp.com",projectId:"report-ee942",storageBucket:"report-ee942.firebasestorage.app",messagingSenderId:"253711668172",appId:"1:253711668172:web:96483180fd8029f2bfc369"}),fdb=getFirestore(app),auth=getAuth(app);
+const ADP={get:async id=>{const s=await getDoc(doc(fdb,'report',id));return s.exists()?s.data():null},set:(id,o)=>setDoc(doc(fdb,'report',id),o)};
+let D=null,I=null;
+const MN=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const AL=[['يناير'],['فبراير'],['مارس'],['ابريل','أبريل'],['مايو'],['يونبو','يونيو'],['يوليو'],['اغسطس','أغسطس'],['سبتمبر'],['اكتوبر','أكتوبر'],['نوفمبر'],['ديسمبر']];
+const COL=['#6a9a82','#7aa9a6','#c9b284','#c9917a','#8ea4bb','#a898b8','#97b385','#b3a390','#cba2ab','#86a092'];
+let CH=null,idx=0,tm=null,paused=false,DUR=13000,t0=0;
+const $=s=>document.querySelector(s),sum=a=>a.reduce((x,y)=>x+y,0);
+const f=v=>Math.round(v).toLocaleString('en'),mm=v=>(v/1e6).toFixed(1)+' مليون',pc=v=>(v>=0?'+':'')+v.toFixed(1)+'%';
+const cs=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function agg(){const L=D.L,G=D.g,cities=[...new Set(G.map(x=>x.c))],rows=[];
+ const ci=cities.map(c=>{const gs=G.filter(x=>x.c==c);return{c,m:MN.map((_,j)=>sum(gs.map(x=>x.m[j]))),a:MN.map((_,j)=>sum(gs.map(x=>x.a[j]))),n:sum(gs.map(x=>x.n)),rg:sum(gs.map(x=>x.rg)),b:[0,1,2,3,4].map(i=>sum(gs.map(x=>x.b[i]))),bs:[0,1,2,3,4].map(i=>sum(gs.map(x=>x.bs[i]))),ba:[0,1,2,3,4].map(i=>sum(gs.map(x=>x.ba[i])))}});
+ ci.forEach(x=>x.t=sum(x.m));ci.sort((a,b)=>b.t-a.t);
+ const tot=MN.map((_,j)=>sum(ci.map(x=>x.m[j]))),act=MN.map((_,j)=>sum(ci.map(x=>x.a[j])));
+ const rg=G.map(x=>({...x,t:sum(x.m)})).sort((a,b)=>b.t-a.t);
+ return{L,ci,tot,act,rg,T:sum(tot),N:sum(ci.map(x=>x.n)),RG:sum(ci.map(x=>x.rg)),B:[0,1,2,3,4].map(i=>sum(ci.map(x=>x.b[i]))),BS:[0,1,2,3,4].map(i=>sum(ci.map(x=>x.bs[i]))),BA:[0,1,2,3,4].map(i=>sum(ci.map(x=>x.ba[i])))}}
+function per(m,a,b,L){const s=sum(m.slice(a,b+1).filter((_,i)=>a+i<=L)),full=m.slice(a,b+1).filter((_,i)=>a+i<L).length;return{s,avg:full?sum(m.slice(a,Math.min(b,L-1)+1))/full:0,full}}
+function per_tbl(A,defs){let h='<tr><th>الفترة</th><th>الإجمالي</th><th>متوسط شهري</th><th>النمو</th></tr>',pv=null;
+ defs.forEach(([n,a,b])=>{const p=per(A.tot,a,b,A.L);if(!p.s&&!p.full)return;const g=pv&&pv.avg?(p.avg/pv.avg-1)*100:null;
+ h+=`<tr><td>${n}${b>A.L-1&&a<=A.L?' (جزئي)':''}</td><td>${f(p.s)}</td><td>${f(p.avg)}</td><td class="${g>=0?'up':'dn'}">${g==null?'—':pc(g)}</td></tr>`;pv=p});return`<div class="tw"><table>${h}</table></div>`}
+const Q=[['الربع 1',0,2],['الربع 2',3,5],['الربع 3',6,8],['الربع 4',9,11]],H=[['النصف الأول',0,5],['النصف الثاني',6,11]];
+
+let IB=null,IBt=0;const ib=()=>{if(!IB||IBt!==I.ts){IB=iagg();IBt=I.ts}return IB};
+const IL=['متحرك','بطيء','راكد','راكد تمامًا','نفد (مخزون صفر)','غير نشط'],IC=['#6a9a82','#c9b284','#c9917a','#b5806e','#8ea4bb','#86a092'];
+function iagg(){const L=I.L,as=I.asof,rows=I.i.map(r=>{const m=r.slice(3,15),s=+r[2]||0,ls=r[15]==null?-1:r[15],lp=r[16]==null?-1:r[16];let a=0,sm=0,tt=0;for(let j=0;j<=L;j++){tt+=m[j];if(m[j]>0){a++;sm+=m[j]}}const avg=a?sm/a:0,ds=ls>=0?as-ls:as,dp=lp>=0?as-lp:as;let cat,cov=null;if(s<=0)cat=a?4:5;else if(!a)cat=3;else{cov=s/avg;cat=ds>=90?2:(cov>3||ds>=45)?1:0}return{n:r[0],co:r[1],s,m,a,avg,cov,ds,dp,ls,lp,cat,tt}});
+ const K=[0,1,2,3,4,5].map(c=>{const x=rows.filter(r=>r.cat==c);return{n:x.length,s:sum(x.map(r=>Math.max(0,r.s))),t:sum(x.map(r=>r.tt))}});
+ return{rows,K,it:MN.map((_,j)=>sum(rows.map(r=>r.m[j]))),S:sum(rows.map(r=>Math.max(0,r.s))),T:sum(rows.map(r=>r.tt)),L,as}}
+function irec(){const B=ib(),tr=B.K[2].s+B.K[3].s,p=B.S?tr/B.S*100:0,c={};B.rows.filter(r=>r.cat==2||r.cat==3).forEach(r=>c[r.co]=(c[r.co]||0)+r.s);const t=Object.entries(c).sort((a,b)=>b[1]-a[1])[0],n4=B.rows.filter(r=>r.cat==4&&r.ds<=60).length;return`${f(tr)} وحدة (${p.toFixed(0)}%) من الرصيد راكد${t?'، وأكبرها عند '+t[0]:''}. و${f(n4)} صنف نافد وبيتباع: راجع التوريد.`}
+function islides(B){const{rows,K,it,S,T,L,as}=B,mob=innerWidth<700,tr=K[2].s+K[3].s,trp=S?tr/S*100:0,act=rows.length-K[5].n,inter=rows.filter(r=>r.a>0&&r.a<3).length;
+ const ch=()=>`<div class="cv"><canvas id="cv"></canvas></div>`,lg={legend:{position:'bottom'}},rowT=r=>`<div class="tw"><table>${r}</table></div>`,e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),dd=(d,h)=>f(d)+' يوم'+(h?'':'*'),cvg=r=>r.cov==null?'—':r.cov.toFixed(1),
+ sel=(fn,key,n)=>rows.filter(fn).sort((a,b)=>b[key]-a[key]).slice(0,n);
+ const co={};rows.filter(r=>r.cat==2||r.cat==3).forEach(r=>co[r.co]=(co[r.co]||0)+r.s);const cl=Object.entries(co).sort((a,b)=>b[1]-a[1]).slice(0,10);
+ const sT=sel(r=>r.cat==2||r.cat==3,'s',12),bl=rows.filter(r=>r.s>0&&r.lp>=0&&r.dp<=60&&(r.cat>=2&&r.cat<=3||r.cov>6)),blT=[...bl].sort((a,b)=>b.s-a.s).slice(0,10),
+ so=rows.filter(r=>r.cat==4&&r.ds<=60&&r.ls>=0),soT=[...so].sort((a,b)=>b.avg-a.avg).slice(0,10),bs=sel(r=>r.tt>0,'tt',10);
+ const note='* لا يوجد تاريخ مسجل، محسوب من أول السنة.';
+ const th=(a)=>'<tr>'+a.map(x=>`<th>${x}</th>`).join('')+'</tr>';
+ return[
+ {t:'نظرة عامة على الأصناف',x:`${f(rows.length)} صنف في الملف، منهم ${f(act)} له حركة أو رصيد. الرصيد الحالي ${f(S)} وحدة، و${trp.toFixed(0)}% منه راكد (ما اتباعش من 90 يوم أو أكتر). الرصيد بالوحدات لأن الملف مفيهوش تكلفة.`,tip:'التصنيف: التغطية = الرصيد ÷ متوسط البيع الشهري (على الشهور اللي اتباع فيها الصنف فعلًا) وآخر تاريخ بيع. متحرك: تغطية حتى 3 شهور، بطيء: تغطية أكتر من 3 شهور أو آخر بيع من 45 يوم، راكد: آخر بيع من 90 يوم أو أكتر، وراكد تمامًا: ما اتباعش خالص السنة.',h:`<div class="kp"><div><b data-n="${rows.length}">0</b><span>صنف</span></div><div><b data-n="${act}">0</b><span>له حركة أو رصيد</span></div><div><b data-n="${S}">0</b><span>وحدة رصيد</span></div><div><b>${trp.toFixed(0)}%</b><span>من الرصيد راكد</span></div></div>`},
+ {t:'حالة الأصناف',x:`${f(K[0].n)} صنف متحرك، ${f(K[1].n)} بطيء، ${f(K[2].n)} راكد، و${f(K[3].n)} صنف رصيده موجود وما اتباعش خالص السنة (راكد تمامًا). و${f(K[4].n)} صنف نفد وله مبيعات، و${f(inter)} صنف متقطع (اتباع أقل من 3 شهور).`,tip:'الراكد تمامًا أول مرشح للتصريف أو الرد للشركة، والنافد أول مرشح للشراء.',h:`<div class="two">${ch()}${rowT(th(['الحالة','الأصناف','%','الرصيد','%'])+IL.map((n,i)=>`<tr><td>${n}</td><td>${f(K[i].n)}</td><td>${(K[i].n/rows.length*100).toFixed(0)}%</td><td>${f(K[i].s)}</td><td>${S?(K[i].s/S*100).toFixed(0):0}%</td></tr>`).join(''))}</div>`,c:()=>({type:'doughnut',data:{labels:IL,datasets:[{data:K.map(k=>k.n),backgroundColor:IC,borderWidth:0,borderRadius:6,spacing:2}]},options:{cutout:'58%',plugins:lg}})},
+ {t:'الرصيد حسب الحالة',x:`الرصيد الراكد والراكد تمامًا ${f(tr)} وحدة (${trp.toFixed(0)}% من الرصيد)، والمتحرك ${S?(K[0].s/S*100).toFixed(0):0}% بس.`,tip:trp>30?'جزء كبير من الرصيد واقف: وقف شراء الأصناف دي لحد ما التغطية ترجع تحت 3 شهور.':'نسبة الراكد في الحدود المقبولة، استمر في المراقبة.',h:ch(),c:()=>({type:'bar',data:{labels:IL.slice(0,5),datasets:[{data:K.slice(0,5).map(k=>k.s),backgroundColor:IC,share:1,k:'n'}]},options:{indexAxis:'y',plugins:{legend:{display:false}}}})},
+ {t:'أكتر الأصناف ركودًا',x:`أكبر 12 صنف راكد من حيث الرصيد. "آخر بيع" بيقيس من تاريخ الملف (${as>=0?'':''}${as} يوم من أول السنة).`,tip:`${note} ابدأ بالأعلى رصيدًا: عروض تصريف، أو رد للشركة، أو نقل لفرع أنشط.`,h:rowT(th(['الصنف','الشركة','الرصيد','آخر بيع','آخر شراء','متوسط/شهر'])+sT.map(r=>`<tr><td>${e(r.n)}</td><td>${e(r.co)}</td><td>${f(r.s)}</td><td>${dd(r.ds,r.ls>=0)}</td><td>${dd(r.dp,r.lp>=0)}</td><td>${r.a?f(r.avg):'—'}</td></tr>`).join(''))},
+ {t:'اشتريناه ومابيعش',x:`${f(bl.length)} صنف اتشترى في آخر 60 يوم ولسه راكد أو تغطيته فوق 6 شهور، رصيدهم ${f(sum(bl.map(r=>r.s)))} وحدة. دي أكبر 10.`,tip:'وقف الشراء من الأصناف دي وراجع حدود الطلب مع المشتريات.',h:rowT(th(['الصنف','الشركة','الرصيد','آخر شراء','آخر بيع','التغطية (شهر)'])+blT.map(r=>`<tr><td>${e(r.n)}</td><td>${e(r.co)}</td><td>${f(r.s)}</td><td>${dd(r.dp,true)}</td><td>${dd(r.ds,r.ls>=0)}</td><td>${cvg(r)}</td></tr>`).join('')+(blT.length?'':'<tr><td colspan=6>لا يوجد</td></tr>'))},
+ {t:'نفد وبيتباع',x:`${f(so.length)} صنف مخزونه صفر وآخر بيع له من أقل من 60 يوم. دي أعلى 10 حسب متوسط البيع الشهري.`,tip:`${note} اطلبهم الأول، ولو آخر شراء قديم يبقى فيه تأخير في التوريد.`,h:rowT(th(['الصنف','الشركة','متوسط/شهر','آخر بيع','آخر شراء'])+soT.map(r=>`<tr><td>${e(r.n)}</td><td>${e(r.co)}</td><td>${f(r.avg)}</td><td>${dd(r.ds,true)}</td><td>${dd(r.dp,r.lp>=0)}</td></tr>`).join(''))},
+ {t:'الأكثر مبيعًا',x:`أعلى 10 أصناف مبيعًا هذه السنة (كمية + بونص) مع الرصيد وتغطيته بالشهور.`,tip:'التغطية الأقل من شهر في صنف رئيسي معناها خطر نفاد، والأكتر من 6 شهور معناها شراء زيادة.',h:rowT(th(['الصنف','الشركة','مبيعات السنة','متوسط/شهر','الرصيد','التغطية (شهر)'])+bs.map(r=>`<tr><td>${e(r.n)}</td><td>${e(r.co)}</td><td>${f(r.tt)}</td><td>${f(r.avg)}</td><td>${f(r.s)}</td><td class="${r.cov!=null&&r.cov<1?'dn':''}">${cvg(r)}</td></tr>`).join(''))},
+ {t:'الرواكد حسب الشركة',x:`أكتر 10 شركات عندها رصيد راكد (وحدات). ${cl[0]?cl[0][0]+' في الصدارة بـ '+f(cl[0][1])+' وحدة.':''}`,tip:'استخدم الأرقام دي في التفاوض مع الشركات على مرتجعات أو تبديل أو عروض.',h:ch(),c:()=>({type:'bar',data:{labels:cl.map(x=>x[0]),datasets:[{data:cl.map(x=>x[1]),backgroundColor:COL,share:1,k:'n'}]},options:{indexAxis:'y',plugins:{legend:{display:false}}}})},
+ {t:'مبيعات الأصناف شهريًا',x:`إجمالي الوحدات المباعة (كمية + بونص) كل شهر. ${MN[L]} شهر جزئي.`,tip:'قارنها بشريحة المبيعات الشهرية بالقيمة لتعرف لو الوحدات والقيمة بيتحركوا مع بعض.',h:ch(),c:()=>({type:'bar',data:{labels:MN.slice(0,L+1).map((m,i)=>i==L?m+'*':m),datasets:[{data:it.slice(0,L+1),backgroundColor:it.slice(0,L+1).map((v,i)=>i==L?COL[2]:COL[0]),k:'n'}]},options:{plugins:{legend:{display:false}}}})},
+ {t:'أرباع ونصفان للأصناف',x:'المقارنة بالمتوسط الشهري على الشهور الكاملة.',tip:'لو الوحدات نازلة والمبيعات بالقيمة طالعة فده من زيادة الأسعار مش من زيادة الكميات.',h:`<div style="display:flex;flex-direction:column;gap:12px;flex:1;overflow:auto">${per_tbl({tot:it,L},Q)}${per_tbl({tot:it,L},H)}</div>`}]}
+function msg(t){const e=$('#st');if(!e)return;e.textContent=t;setTimeout(()=>{e.textContent=D?'مبيعات: '+D.stamp+(I?' | مخزون: '+I.stamp:''):''},4500)}
+const CK=90000;
+async function rsave(key,o){const s=JSON.stringify(o),n=Math.ceil(s.length/CK);for(let i=0;i<n;i++)await ADP.set(key+'_'+i,{s:s.slice(i*CK,(i+1)*CK)});await ADP.set(key+'_meta',{n,ts:o.ts||Date.now()})}
+async function rnew(key,ts){const m=await ADP.get(key+'_meta');if(!m||(m.ts||0)<=ts)return null;let s='';for(let i=0;i<m.n;i++){const c=await ADP.get(key+'_'+i);if(!c)return null;s+=c.s}return JSON.parse(s)}
+async function boot(){try{const a=await rnew('d',D?D.ts||0:0);if(a)D=a;const b=await rnew('i',I?I.ts||0:0);if(b)I=b;if(a||b){idx=0;draw();t0=performance.now()}}catch(_){}}
+async function impItems(R){
+ if(!I){alert('حمّل البيانات الأولية للأصناف الأول');return}
+ const di=d=>d instanceof Date?Math.round((d-new Date(2026,0,1))/864e5):-1,ag=new Map();let mx=-1;
+ const nv=v=>typeof v==='number'&&isFinite(v)?v:(typeof v==='string'&&v.trim()!==''&&isFinite(+v)?+v:NaN);let bad=0,mn=1e9;
+ R.forEach(r=>{const n=String(r['اسم الصنف']||'').trim();if(!n)return;const q1=nv(r['الكميه']),q2=nv(r['البونص']),st=nv(r['الرصيد الحالى']);if(isNaN(q1)||isNaN(q2)||isNaN(st)){bad++;return}
+  const co=String(r['الشركه']||'').trim(),k=n+'|'+co,a=ag.get(k)||{n,co,q:0,s:0,ls:-1,lp:-1},d1=di(r['اخر تاريخ بيع']),d2=di(r['اخر تاريخ شراء']);
+  a.q+=q1+q2;a.s+=st;a.ls=Math.max(a.ls,d1);a.lp=Math.max(a.lp,d2);ag.set(k,a);mx=Math.max(mx,d1,d2);if(d1>=0)mn=Math.min(mn,d1);if(d2>=0)mn=Math.min(mn,d2)});
+ if(mx<0){alert('لا توجد تواريخ في الملف، تأكد من أعمدة آخر بيع وآخر شراء');return}
+ const Lm=new Date(2026,0,1+mx).getMonth();
+ if(mn<Math.round((new Date(2026,Lm,1)-new Date(2026,0,1))/864e5)){alert('الملف تراكمي (فيه تواريخ قبل بداية '+MN[Lm]+'). ابعت تقرير الأساس من 1/1 إلى آخر الشهر السابق الأول، أو استخدم تقرير '+MN[Lm]+' لوحده.');return}
+ if(Lm<I.L&&!confirm('الملف لشهر '+MN[Lm]+' وهو أقدم من آخر شهر محمّل. تعديله؟'))return;
+ const ex=new Map(I.i.map((r,i)=>[r[0]+'|'+r[1],i]));
+ I.i.forEach(r=>{for(let j=Lm;j<12;j++)r[3+j]=0});
+ ag.forEach((a,k)=>{const i=ex.get(k);if(i!=null){const r=I.i[i];r[3+Lm]=Math.round(a.q);r[2]=Math.round(a.s);if(a.ls>(r[15]==null?-1:r[15]))r[15]=a.ls;if(a.lp>(r[16]==null?-1:r[16]))r[16]=a.lp}
+  else if(a.q!=0||a.s>0){const m=Array(12).fill(0);m[Lm]=Math.round(a.q);I.i.push([a.n,a.co,Math.round(a.s),...m,a.ls,a.lp])}});
+ I.L=Lm;I.asof=Math.max(I.asof||0,mx);I.stamp=new Date().toLocaleDateString('ar-EG');I.ts=Date.now();
+ try{await rsave('i',I);msg('تم الحفظ ✓'+(bad?' (تجاهل '+bad+' صف تالف)':''))}catch(_){msg('تعذر الحفظ على السيرفر')}
+ go(0)}
+function slides(A){const L=A.L,last=MN[L],T=A.T,C=A.ci,top=C[0],mob=innerWidth<700;
+ const qs=Q.map(([n,a,b])=>per(A.tot,a,b,L)),hs=H.map(([n,a,b])=>per(A.tot,a,b,L));
+ const G=(x,y)=>x?(y/x-1)*100:0,gq=G(qs[1].avg,qs[2].avg),gh=G(hs[0].avg,hs[1].avg);
+ const cg=C.map(x=>({c:x.c,q:Q.map(([n,a,b])=>per(x.m,a,b,L).avg),h1:per(x.m,0,5,L).avg,h2:per(x.m,6,11,L).avg,a1:sum(x.a.slice(0,6)),a2:sum(x.a.slice(6,L)),s1:sum(x.m.slice(0,6)),s2:sum(x.m.slice(6,L))}));
+ cg.forEach(x=>x.g=G(x.h1,x.h2));const gs=[...cg].sort((a,b)=>b.g-a.g);
+ const rg=A.rg.filter(x=>x.t>2e5).map(x=>{const p=per(x.m,0,5,L).avg,q=per(x.m,6,11,L).avg;return{...x,g:G(p,q),d:q-p}}).filter(x=>isFinite(x.g)).sort((a,b)=>b.g-a.g);
+ const up=rg.slice(0,5),dn=rg.slice(-5).reverse();
+ const rt=A.RG/A.N*100,avgA=sum(A.act.slice(0,L))/L,full=A.tot.slice(0,L);
+ const mx=full.indexOf(Math.max(...full)),mn=full.indexOf(Math.min(...full));
+ const mom=full.map((v,j)=>j?G(full[j-1],v):null);
+ const sh3=sum(C.slice(0,3).map(x=>x.t))/T*100,sh10=sum(A.rg.slice(0,10).map(x=>x.t))/T*100,tsh=top.t/T*100;
+ const ap=A.tot.map((v,j)=>A.act[j]?v/A.act[j]:0),ap1=sum(A.tot.slice(0,6))/Math.max(1,sum(A.act.slice(0,6))),ap2=sum(A.tot.slice(6,L))/Math.max(1,sum(A.act.slice(6,L)));
+ let proj='';const now=new Date();if(now.getMonth()==L){const dm=new Date(now.getFullYear(),L+1,0).getDate();proj=` لو الإيقاع الحالي استمر، ${last} هيقفل تقريبًا على ${mm(A.tot[L]/now.getDate()*dm)} (تقدير بسيط).`}
+ const ch=()=>`<div class="cv"><canvas id="cv"></canvas></div>`,lg={legend:{position:'bottom'}},hz=mob?'y':'x';
+ const TL=['أقل من 5 آلاف','5 – 20 ألف','20 – 50 ألف','50 – 100 ألف','أكثر من 100 ألف'],TB=A.B,TS=A.BS,TA=A.BA,TN=sum(TB),TST=sum(TS),mi=TB.indexOf(Math.max(...TB)),hi=TB[3]+TB[4],his=(TS[3]+TS[4])/TST*100,lo=TS[0]/TST*100;
+ const rowT=(r)=>`<div class="tw"><table>${r}</table></div>`;
+ const cc=v=>`class="${v>=0?'up':'dn'}"`;
+ const SL=[
+ {t:'نظرة عامة',x:`الصفحة دي بتحكي قصة مبيعاتك من أول السنة. حتى ${last} المبيعات ${mm(T)} من ${f(A.N)} عميل اشتروا فعلًا، وفي المتوسط ${f(avgA)} عميل بيشتري كل شهر. ${last} لسه شهر جزئي.${proj}`,tip:'اتفرج بالترتيب: المدن، ثم الشهور والأرباع، ثم العملاء، وفي الآخر التوصيات.',h:`<div class="kp"><div><b data-n="${T}">0</b><span>إجمالي المبيعات</span></div><div><b data-n="${A.N}">0</b><span>عميل نشط</span></div><div><b data-n="${C.length}">0</b><span>مدينة</span></div><div><b data-n="${A.rg.length}">0</b><span>منطقة</span></div></div>`},
+ {t:'المبيعات حسب المدينة',x:`${top.c} الأولى بـ ${mm(top.t)} (${tsh.toFixed(0)}% من الإجمالي)، وأضعف مدينة ${C.at(-1).c} بـ ${mm(C.at(-1).t)}. أول 3 مدن بس بيمثلوا ${sh3.toFixed(0)}% من المبيعات.`,tip:sh3>60?'التركيز عالي في أول 3 مدن: أي مشكلة فيهم بتأثر على الشركة كلها، فوزّع الجهد على المدن اللي بعدهم.':'التوزيع متوازن نسبيًا بين المدن، وده ميزة.',h:ch(),c:()=>({type:'bar',data:{labels:C.map(x=>x.c),datasets:[{data:C.map(x=>x.t),backgroundColor:COL,share:1}]},options:{indexAxis:'y',plugins:{legend:{display:false}}}})},
+ {t:'حصة كل مدينة',x:`الدونات بتوضح نصيب كل مدينة من الإجمالي. أول 10 مناطق لوحدهم ${sh10.toFixed(0)}% من المبيعات، يعني باقي المناطق (${A.rg.length-10}) بتبيع الباقي.`,tip:'ركّز الزيارات والعروض على المناطق الكبيرة، وللمناطق الصغيرة اعمل خطة تجميع طلبات بدل زيارات كتير.',h:ch(),c:()=>({type:'doughnut',data:{labels:C.map(x=>x.c),datasets:[{data:C.map(x=>x.t),backgroundColor:COL,borderWidth:0,borderRadius:6,spacing:2}]},options:{cutout:'58%',plugins:lg}})},
+ {t:'المقارنة الشهرية',x:`أعلى شهر كامل ${MN[mx]} بـ ${mm(full[mx])}، وأضعف شهر ${MN[mn]} بـ ${mm(full[mn])}. آخر شهر كامل (${MN[L-1]}) ${pc(mom[L-1])} عن ${MN[L-2]}. النجمة (*) على ${last} معناها شهر لسه ماخلصش.`,tip:'استخدم الشهور القوية والضعيفة في تخطيط المخزون والعروض: خزّن قبل الشهور العالية وانزل بعروض في الضعيفة.',h:ch(),c:()=>({type:'line',data:{labels:MN.slice(0,L+1).map((m,i)=>i==L?m+'*':m),datasets:C.map((x,i)=>({label:x.c,data:x.m.slice(0,L+1),borderColor:COL[i%10],backgroundColor:COL[i%10],tension:.35,pointRadius:2,lbl:false}))},options:{plugins:lg}})},
+ {t:'التغير الشهري %',x:`كل عمود هو نسبة تغير المبيعات عن الشهر اللي قبله. الأخضر نمو والبني تراجع.`,tip:'لو التراجع بيتكرر في نفس الشهر كل سنة يبقى موسمي، ولو مستمر يبقى مشكلة تحتاج تحرك.',h:ch(),c:()=>({type:'bar',data:{labels:MN.slice(1,L),datasets:[{data:mom.slice(1),backgroundColor:mom.slice(1).map(v=>v>=0?COL[0]:COL[3]),k:'p'}]},options:{plugins:{legend:{display:false}}}})},
+ {t:'المبيعات شهر بشهر لكل مدينة',x:`كل خانة هي مبيعات المدينة في الشهر (بالألف)، وكل صف ملوّن بالنسبة لأقوى شهر في نفس المدينة. أعلى إجمالي شهري كان ${MN[mx]} بـ ${mm(full[mx])}.`,tip:'اقرا الصف أفقيًا لتعرف موسمية كل مدينة، والعمود رأسيًا لتقارن المدن في نفس الشهر. النجمة (*) تعني شهرًا جزئيًا.',h:(()=>{const hd='<tr><th>المدينة</th>'+MN.slice(0,L+1).map((m,i)=>`<th>${i==L?m+'*':m}</th>`).join('')+'</tr>';const body=C.map(x=>{const v=x.m.slice(0,L+1),mx=Math.max(...v.map(Math.abs))||1;return`<tr><td>${x.c}</td>`+v.map(a=>`<td style="text-align:center;background:color-mix(in srgb,var(--ac) ${Math.round(Math.max(0,a)/mx*45)}%,transparent)">${f(a/1000)}</td>`).join('')+'</tr>'}).join('');return rowT(hd+body+`<tr><td><b>الإجمالي</b></td>`+A.tot.slice(0,L+1).map(a=>`<td style="text-align:center"><b>${f(a/1000)}</b></td>`).join('')+'</tr>')})()},
+ {t:'العملاء النشطين شهر بشهر',x:`عدد العملاء اللي اشتروا فعلًا في كل شهر لكل مدينة. متوسط العملاء النشطين في الشهر ${f(avgA)} عميل.`,tip:'لو المبيعات طلعت والعملاء ثابتين فالنمو من زيادة شراء العميل، ولو العملاء زادوا فالنمو من توسّع القاعدة.',h:(()=>{const hd='<tr><th>المدينة</th>'+MN.slice(0,L+1).map((m,i)=>`<th>${i==L?m+'*':m}</th>`).join('')+'</tr>';const body=C.map(x=>{const v=x.a.slice(0,L+1),mx=Math.max(...v)||1;return`<tr><td>${x.c}</td>`+v.map(a=>`<td style="text-align:center;background:color-mix(in srgb,var(--ac) ${Math.round(a/mx*45)}%,transparent)">${f(a)}</td>`).join('')+'</tr>'}).join('');return rowT(hd+body+`<tr><td><b>الإجمالي</b></td>`+A.act.slice(0,L+1).map(a=>`<td style="text-align:center"><b>${f(a)}</b></td>`).join('')+'</tr>')})()},
+ {t:'مقارنة ربع سنوية',x:`بنقارن بالمتوسط الشهري عشان الربع الجزئي ميتظلمش. الربع الثالث ${pc(gq)} عن الثاني. ${last} جزئي ومش داخل في المتوسط.`,tip:gq>=0?'الربع الأخير اتحرك لفوق، حافظ على الزخم قبل نهاية السنة.':'فيه تراجع في الربع الأخير، راجع المدن اللي نزلت في الشريحة الجاية.',h:`<div class="two">${ch()}${per_tbl(A,Q)}</div>`,c:()=>({type:'bar',data:{labels:C.map(x=>x.c),datasets:Q.map(([n,a,b],i)=>({label:n,data:cg.map(y=>y.q[i]),backgroundColor:COL[i]}))},options:{indexAxis:hz,plugins:lg}})},
+ {t:'الأرباع لكل مدينة',x:`متوسط المبيعات الشهري لكل مدينة في كل ربع، مع نمو الربع 3 عن 2 ونمو النصف الثاني عن الأول.`,tip:'المدن اللي نموها سالب في العمودين لازم تتراجع بالتفصيل (منطقة بمنطقة).',h:rowT('<tr><th>المدينة</th><th>ر1</th><th>ر2</th><th>ر3</th><th>ر4*</th><th>ر3/ر2</th><th>ن2/ن1</th></tr>'+cg.map(x=>`<tr><td>${x.c}</td>${x.q.map(v=>`<td>${v?f(v):'—'}</td>`).join('')}<td ${cc(G(x.q[1],x.q[2]))}>${pc(G(x.q[1],x.q[2]))}</td><td ${cc(x.g)}>${pc(x.g)}</td></tr>`).join(''))},
+ {t:'مقارنة نصف سنوية',x:`متوسط الشهر في النصف الثاني ${pc(gh)} عن الأول. أسرع نمو في ${gs[0].c} (${pc(gs[0].g)}) وأبطأ في ${gs.at(-1).c} (${pc(gs.at(-1).g)}).`,tip:'قارن النمو بحجم المدينة: نمو كبير على رقم صغير أقل أهمية من نمو بسيط على مدينة كبيرة.',h:`<div class="two">${ch()}${per_tbl(A,H)}</div>`,c:()=>({type:'bar',data:{labels:C.map(x=>x.c),datasets:H.map(([n,a,b],i)=>({label:n,data:cg.map(y=>i?y.h2:y.h1),backgroundColor:COL[i*2],lbl:true}))},options:{indexAxis:hz,plugins:lg}})},
+ {t:'ترتيب المدن حسب النمو',x:`نمو متوسط الشهر في النصف الثاني مقارنة بالأول لكل مدينة.`,tip:`ادعم ${gs[0].c} عشان النمو يكمل، وافهم سبب ضعف ${gs.at(-1).c} (منافسة؟ ناقص أصناف؟ مندوب؟).`,h:ch(),c:()=>({type:'bar',data:{labels:gs.map(x=>x.c),datasets:[{data:gs.map(x=>x.g),backgroundColor:gs.map(x=>x.g>=0?COL[0]:COL[3]),k:'p'}]},options:{indexAxis:'y',plugins:{legend:{display:false}}}})},
+ {t:'العملاء النشطين ومتوسط الشراء',x:`الأعمدة عدد العملاء اللي اشتروا في كل شهر، والخط متوسط شراء العميل. متوسط الشراء كان ${f(ap1)} في النصف الأول و${f(ap2)} في الثاني (${pc(G(ap1,ap2))}).`,tip:ap2>=ap1?'العميل بيشتري أكتر: ركّز على زيادة عدد العملاء النشطين.':'متوسط الشراء نزل: جرّب عروض سلة (شراء بكمية أكبر) وبيع أصناف مكمّلة.',h:ch(),c:()=>({data:{labels:MN.slice(0,L+1).map((m,i)=>i==L?m+'*':m),datasets:[{type:'bar',label:'عملاء نشطين',data:A.act.slice(0,L+1),backgroundColor:COL[1],yAxisID:'y',lbl:true,k:'n',pos:'in'},{type:'line',label:'متوسط شراء العميل',data:ap.slice(0,L+1),borderColor:COL[3],backgroundColor:COL[3],yAxisID:'y1',lbl:true,tension:.3}]},options:{scales:{y1:{position:'left',grid:{display:false}}},plugins:lg}})},
+ {t:'العملاء مقابل المبيعات',x:`لكل مدينة: متوسط عدد العملاء النشطين شهريًا (أعمدة) ومتوسط مبيعات العميل (خط). المدينة اللي خطها عالي وأعمدتها قليلة بتعتمد على عملاء كبار.`,tip:'المدن الكبيرة بعملاء قليلين: أي عميل بيروح منها يوجع. المدن بعملاء كتير ومتوسط شراء قليل: فرصة لزيادة السلة.',h:ch(),c:()=>({data:{labels:C.map(x=>x.c),datasets:[{type:'bar',label:'عملاء نشطين/شهر',data:C.map(x=>sum(x.a.slice(0,L))/L),backgroundColor:COL[1],yAxisID:'y',lbl:true,k:'n',pos:'in'},{type:'line',label:'متوسط مبيعات العميل',data:C.map(x=>sum(x.m.slice(0,L))/Math.max(1,sum(x.a.slice(0,L)))),borderColor:COL[3],backgroundColor:COL[3],yAxisID:'y1',lbl:true}]},options:{scales:{y1:{position:'left',grid:{display:false}}},plugins:lg}})},
+ {t:'شرائح العملاء',x:`قسمنا العملاء حسب متوسط شرائهم الشهري (إجمالي مشترياته ÷ الشهور اللي اشترى فيها فعلًا). أكبر شريحة عددًا "${TL[mi]}" بـ ${f(TB[mi])} عميل (${(TB[mi]/TN*100).toFixed(0)}%). وشريحة "أكثر من 100 ألف" فيها ${f(TB[4])} عميل بس وبتمثل ${(TS[4]/TST*100).toFixed(0)}% من المبيعات.`,tip:`${f(hi)} عميل (أعلى شريحتين) بيجيبوا ${his.toFixed(0)}% من المبيعات: لازم متابعة شخصية ومندوب مخصص. وشريحة أقل من 5 آلاف (${f(TB[0])} عميل) نصيبها ${lo.toFixed(0)}% بس: بيع بتجميع الطلبات وبدون زيارات كتير.`,h:`<div class="two">${ch()}${rowT('<tr><th>الشريحة (متوسط شهري)</th><th>العملاء</th><th>%</th><th>المبيعات</th><th>%</th><th>متوسط العميل</th></tr>'+TL.map((n,i)=>`<tr><td>${n}</td><td>${f(TB[i])}</td><td>${(TB[i]/TN*100).toFixed(0)}%</td><td>${mm(TS[i])}</td><td>${(TS[i]/TST*100).toFixed(0)}%</td><td>${TB[i]?f(TA[i]/TB[i]):'—'}</td></tr>`).join(''))}</div>`,c:()=>({type:'bar',data:{labels:TL,datasets:[{data:TB,backgroundColor:COL,share:1,k:'n'}]},options:{indexAxis:mob?'y':'x',plugins:{legend:{display:false}}}})},
+ {t:'الشرائح لكل مدينة',x:`عدد العملاء في كل شريحة داخل كل مدينة. المدينة اللي فيها عملاء كتير في الشرائح العالية قاعدتها أقوى.`,tip:'المدن اللي أغلب عملائها في الشريحة الأولى فرصتها في ترقية العملاء للشريحة اللي بعدها بعروض بسيطة على الكميات.',h:ch(),c:()=>({type:'bar',data:{labels:C.map(x=>x.c),datasets:TL.map((n,i)=>({label:n,data:C.map(x=>x.b[i]),backgroundColor:COL[i],lbl:true,k:'n'}))},options:{indexAxis:hz,scales:{x:{stacked:true},y:{stacked:true}},plugins:lg}})},
+ {t:'أكبر 10 مناطق',x:`أكبر منطقة ${A.rg[0].r} (${A.rg[0].c}) بـ ${mm(A.rg[0].t)}. أول 10 مناطق = ${sh10.toFixed(0)}% من المبيعات.`,tip:'المناطق دي هي عمود الشركة: تأكد إن مفيش حد فيها بيقل شراؤه.',h:rowT('<tr><th>المنطقة</th><th>المدينة</th><th>المبيعات</th><th>%</th><th>عملاء</th><th>ن2/ن1</th></tr>'+A.rg.slice(0,10).map(x=>{const g=G(per(x.m,0,5,L).avg,per(x.m,6,11,L).avg);return`<tr><td>${x.r}</td><td>${x.c}</td><td>${f(x.t)}</td><td>${(x.t/T*100).toFixed(1)}%</td><td>${x.n}</td><td ${cc(g)}>${pc(g)}</td></tr>`}).join(''))},
+ {t:'مناطق صاعدة وهابطة',x:`من المناطق اللي مبيعاتها فوق 200 ألف: أعلى 5 نموًا وأكتر 5 تراجعًا (النصف الثاني مقابل الأول، بالمتوسط الشهري).`,tip:dn.length?`ابدأ بالتراجع في ${dn[0].r} (${pc(dn[0].g)}) و${dn[1].r} (${pc(dn[1].g)}): زيارة ميدانية وسؤال العملاء مباشرة.`:'',h:rowT('<tr><th>المنطقة</th><th>المدينة</th><th>النمو</th><th>فرق/شهر</th></tr>'+[...up,...dn].map((x,i)=>`<tr${i==5?' style="border-top:3px solid var(--ln)"':''}><td>${i<5?'🟢':'🔻'} ${x.r}</td><td>${x.c}</td><td ${cc(x.g)}>${pc(x.g)}</td><td ${cc(x.d)}>${f(x.d)}</td></tr>`).join(''))},
+ {t:'انتظام العملاء',x:`${rt.toFixed(0)}% من العملاء منتظمين (اشتروا 7 شهور على الأقل من ${L}). الباقي (${f(A.N-A.RG)} عميل) متقطع بيختفي ويرجع.`,tip:'العميل المتقطع أسهل استرجاع من عميل جديد: اتصل بأكبرهم قيمة وقدّم لهم سبب يرجعوا (عرض أو أجل مرن).',h:ch(),c:()=>({type:'bar',data:{labels:C.map(x=>x.c),datasets:[{label:'منتظم',data:C.map(x=>x.rg),backgroundColor:COL[0],lbl:true,k:'n'},{label:'متقطع',data:C.map(x=>x.n-x.rg),backgroundColor:COL[3],lbl:true,k:'n'}]},options:{indexAxis:hz,scales:{x:{stacked:true},y:{stacked:true}},plugins:lg}})},
+ {t:'الخلاصة والتوصيات',x:'',tip:'',h:`<div class="cap" style="font-size:${mob?14:16}px;line-height:2">1️⃣ <b>التركيز:</b> ${top.c} بتمثل ${tsh.toFixed(0)}% وأول 3 مدن ${sh3.toFixed(0)}%، فحافظ عليهم ووسّع قاعدة باقي المدن.<br>2️⃣ <b>النمو:</b> ${gs[0].c} الأسرع (${pc(gs[0].g)})، ادعمها. و${gs.at(-1).c} الأبطأ (${pc(gs.at(-1).g)})، افهم السبب.<br>3️⃣ <b>المناطق الهابطة:</b> ${dn.slice(0,3).map(x=>x.r).join('، ')||'—'}. مراجعة ميدانية فورية.<br>4️⃣ <b>العملاء المتقطعين:</b> ${f(A.N-A.RG)} عميل، اتصل بأكبرهم.<br>5️⃣ <b>متوسط الشراء:</b> ${pc(G(ap1,ap2))} بين النصفين، ${ap2>=ap1?'كمّل على نفس الخط':'جرّب عروض السلة'}.<br>6️⃣ <b>الموسمية:</b> أقوى شهر ${MN[mx]} وأضعف ${MN[mn]}، خطط المخزون والعروض عليهم.<br>7️⃣ <b>الأرباع:</b> الربع 3 ${pc(gq)} عن 2، والنصف الثاني ${pc(gh)} عن الأول.<br>8️⃣ <b>شرائح العملاء:</b> ${f(hi)} عميل في أعلى شريحتين بيجيبوا ${his.toFixed(0)}% من المبيعات، خصّص لهم متابعة.<br>9️⃣ <b>المخزون:</b> ${I?irec():'حمّل ملف الأصناف.'}<br>🔟 <b>الخطوة الجاية:</b> حدّث الملفات يوميًا من زرار الاستيراد.</div>`}];return SL.slice(0,-1).concat(I?islides(ib()):[],SL.slice(-1))}
+const fm=(v,k)=>k=='p'?(v>=0?'+':'')+v.toFixed(1)+'%':k=='n'?Math.round(v).toLocaleString('en'):Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'م':Math.abs(v)>=1e3?Math.round(v/1e3)+'ألف':Math.round(v)+'';
+const LBL={id:'lbl',afterDatasetsDraw(ch){const dl=ch.data.datasets,vis=dl.filter((d,i)=>ch.isDatasetVisible(i)&&d.lbl!==false),one=vis.length==1,x=ch.ctx,fs=Chart.defaults.font.size,hz=ch.options.indexAxis=='y',sc=ch.options.scales||{},stk=!!((sc.x||{}).stacked);
+ x.save();x.textBaseline='middle';x.textAlign='center';x.direction='ltr';
+ dl.forEach((d,i)=>{if(!ch.isDatasetVisible(i)||d.lbl===false||!(one||d.lbl===true))return;const mt=ch.getDatasetMeta(i),tot=sum(d.data.map(v=>+v||0));
+  mt.data.forEach((el,j)=>{const v=+d.data[j];if(!v&&v!==0||isNaN(v))return;const p=el.getProps(['x','y','base','startAngle','endAngle','innerRadius','outerRadius'],true);let t=fm(v,d.k);
+   if(mt.type=='doughnut'){const a=(p.startAngle+p.endAngle)/2,r=(p.innerRadius+p.outerRadius)/2,g=p.endAngle-p.startAngle;if(g<.2)return;const X=p.x+Math.cos(a)*r,Y=p.y+Math.sin(a)*r;x.fillStyle='#2b3630';x.font='800 '+(fs+1)+'px Cairo';x.fillText((v/tot*100).toFixed(0)+'%',X,Y-(g>.45?fs*.55:0));if(g>.45){x.font='600 '+(fs-1)+'px Cairo';x.fillText(fm(v),X,Y+fs*.7)}return}
+   if(mt.type=='line'){x.fillStyle=cs('--tx');x.font='700 '+(fs-1)+'px Cairo';x.fillText(t,p.x,p.y-fs*.9);return}
+   if(d.share&&tot)t+=' · '+(v/tot*100).toFixed(0)+'%';x.font='700 '+(fs-1)+'px Cairo';
+   const w=x.measureText(t).width+6,len=hz?Math.abs(p.x-p.base):Math.abs(p.y-p.base);
+   if(stk||d.pos=='in'){if(len<(hz?w:fs+4))return;x.fillStyle='#2b3630';x.fillText(t,hz?(p.x+p.base)/2:p.x,hz?p.y:(p.y+p.base)/2);return}
+   x.fillStyle=cs('--tx');const neg=v<0;
+   if(hz){x.textAlign=neg?'right':'left';x.fillText(t,p.x+(neg?-6:6),p.y)}else{x.textAlign='center';x.fillText(t,p.x,p.y+(neg?fs:-fs*.8))}x.textAlign='center'})});x.restore()}};
+function draw(){if(!D){$('#m').innerHTML='<div class="sl"><h2>لا توجد بيانات بعد</h2><div class="cap">سجّل الدخول ثم حمّل البيانات الأولية أو استورد ملف Excel.</div></div>';$('#dots').innerHTML='';return 1}const A=agg(),S=slides(A),s=S[idx];if(CH){CH.destroy();CH=null}
+ $('#m').innerHTML=`<div class="sl"><h2>${s.t}</h2>${s.h}<div class="cap" ${s.x?'':'hidden'}>${s.x}</div><div class="tip" ${s.tip?'':'hidden'}>💡 ${s.tip}</div></div>`;DUR=Math.min(30000,Math.max(12000,9000+((s.x||'').length+(s.tip||'').length)*60+(s.t=='الخلاصة والتوصيات'?15000:0)));
+ $('#dots').innerHTML=S.map((_,i)=>`<i class="dot ${i==idx?'on':''}"></i>`).join('');
+ if(s.c&&window.Chart){if(!window._r){Chart.register(LBL);Chart.defaults.scales.linear.grace='14%';Chart.defaults.elements.bar.borderRadius=6;Chart.defaults.elements.bar.borderSkipped=false;window._r=1}Chart.defaults.color=cs('--mu');Chart.defaults.font.family='Cairo';Chart.defaults.font.size=innerWidth<700?11:13;Chart.defaults.borderColor=cs('--ln');const c=s.c();c.options=Object.assign({responsive:true,maintainAspectRatio:false,animation:{duration:1400}},c.options);CH=new Chart($('#cv'),c)}
+ document.querySelectorAll('[data-n]').forEach(e=>{const n=+e.dataset.n,st=performance.now(),k=t=>{const p=Math.min(1,(t-st)/1500);e.textContent=f(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(k)};requestAnimationFrame(k)});
+ $('#st').textContent='مبيعات: '+D.stamp+(I?' | مخزون: '+I.stamp:'');return S.length}
+function go(i){const n=D?slides(agg()).length:1;idx=(i+n)%n;draw();t0=performance.now()}
+function tick(t){if(!paused&&performance.now()>hold){const p=Math.min(1,(t-t0)/DUR);$('#bar i').style.width=p*100+'%';if(p>=1)go(idx+1)}else t0+=16;requestAnimationFrame(tick)}
+$('#nx').onclick=()=>go(idx+1);$('#pv').onclick=()=>go(idx-1);let hold=0,sx=0;const mn=$('#m');['touchstart','wheel','scroll'].forEach(e=>mn.addEventListener(e,()=>hold=performance.now()+8000,{passive:true}));mn.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});mn.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>70)go(d<0?idx+1:idx-1)});$('#dots').onclick=e=>{const i=[...$('#dots').children].indexOf(e.target);if(i>=0)go(i)};
+$('#pp').onclick=e=>{paused=!paused;e.target.textContent=paused?'▶':'⏸'};
+$('#th').onclick=()=>{const r=document.documentElement,d=cs('--bg')=='#131d18';r.dataset.theme=d?'light':'dark';draw()};
+document.onkeydown=e=>{if(e.key=='ArrowLeft')go(idx+1);if(e.key=='ArrowRight')go(idx-1);if(e.key==' ')$('#pp').click()};
+$('#imp').onclick=()=>$('#fi').click();
+$('#fi').onchange=async e=>{const fl=e.target.files[0];if(!fl)return;try{
+ const wb=XLSX.read(await fl.arrayBuffer(),{cellDates:true}),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:0});
+ const nk=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[String(k).trim(),v])),R=rows.map(nk);
+ const ks=Object.keys(R[0]||{});if(ks.some(k=>k.includes('الرصيد'))){await impItems(R);return}if(!ks.includes('المدينه')){alert('شكل الملف غير معروف');return}
+ const mc=AL.map(a=>a.find(k=>k in R[0])),g={};let L=-1;
+ mc.forEach((k,j)=>{if(k&&sum(R.map(r=>+r[k]||0))!=0)L=j});
+ const need=Math.ceil(.7*L);
+ R.forEach(r=>{const k=String(r['المدينه']).trim()+'|'+String(r['المنطقه']).trim(),x=g[k]||(g[k]={c:k.split('|')[0],r:k.split('|')[1],m:Array(12).fill(0),a:Array(12).fill(0),n:0,rg:0,b:[0,0,0,0,0],bs:[0,0,0,0,0],ba:[0,0,0,0,0]});
+  let t=0,ac=0,ps=0,pn=0;mc.forEach((c,j)=>{const v=c?+r[c]||0:0;x.m[j]+=v;if(v>0){x.a[j]++;if(j<L)ac++;if(j<=L){ps+=v;pn++}}t+=v});if(t>0)x.n++;if(pn){const av=ps/pn,ti=av<5e3?0:av<2e4?1:av<5e4?2:av<1e5?3:4;x.b[ti]++;x.bs[ti]+=ps;x.ba[ti]+=av}if(ac>=need)x.rg++});
+ D={stamp:new Date().toLocaleDateString('ar-EG'),L,g:Object.values(g).map(x=>({...x,m:x.m.map(Math.round),bs:x.bs.map(Math.round),ba:x.ba.map(Math.round)}))};
+ D.ts=Date.now();try{await rsave('d',D);msg('تم الحفظ ✓')}catch(_){msg('تعذر الحفظ على السيرفر')}
+ go(0)}catch(err){alert('تعذر قراءة الملف: تأكد من الأعمدة (المدينه، المنطقه، الشهور).')}};
+draw();t0=performance.now();requestAnimationFrame(tick);
+
+
+document.getElementById('lgb').onclick=async()=>{try{await signInWithEmailAndPassword(auth,document.getElementById('em').value,document.getElementById('pw').value)}catch(e){document.getElementById('lge').textContent='بيانات الدخول غير صحيحة'}};
+document.getElementById('rp').onclick=()=>{if(!I){msg('لا توجد بيانات أصناف');return}const B=ib(),d=i=>i>=0?new Date(Date.UTC(2026,0,1+i)).toISOString().slice(0,10):'',rows=B.rows.filter(r=>r.cat==2||r.cat==3).sort((a,b)=>b.s-a.s).map(r=>({'الصنف':r.n,'الشركة':r.co,'الحالة':IL[r.cat],'الرصيد':r.s,'آخر بيع':d(r.ls),'أيام من آخر بيع':r.ds,'آخر شراء':d(r.lp),'أيام من آخر شراء':r.dp,'مبيعات السنة':r.tt,'شهور البيع':r.a,'متوسط/شهر':Math.round(r.avg)})),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'الرواكد');XLSX.writeFile(wb,'stagnant-items-'+new Date().toISOString().slice(0,10)+'.xlsx')};
+document.getElementById('lo').onclick=()=>signOut(auth);
+document.getElementById('seed').onclick=()=>document.getElementById('sf').click();
+document.getElementById('sf').onchange=async e=>{try{for(const f of e.target.files){const o=JSON.parse(await f.text());if(o.g){D=o;await rsave('d',D)}else if(o.i){I=o;await rsave('i',I)}}idx=0;draw();msg('تم تحميل البيانات الأولية ✓')}catch(_){msg('تعذر التحميل: تأكد من الملفين وصلاحيات Firestore')}};
+const adm=u=>{['imp','seed','lo'].forEach(i=>document.getElementById(i).style.display=u?'':'none');document.getElementById('lbtn').style.display=(u||location.hash!='#admin')?'none':'';document.getElementById('lg').style.display='none';document.getElementById('lge').textContent=''};
+document.getElementById('lbtn').onclick=()=>{document.getElementById('lg').style.display='flex'};
+document.getElementById('lcl').onclick=()=>{document.getElementById('lg').style.display='none'};
+document.getElementById('pw').onkeydown=e=>{if(e.key=='Enter')document.getElementById('lgb').click()};
+adm(null);onAuthStateChanged(auth,u=>adm(u));boot();
+</script></body></html>

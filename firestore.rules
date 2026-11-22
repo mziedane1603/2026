@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // القراءة متاحة لأي حد معاه الرابط، والكتابة للأدمن المسجّل الدخول فقط
+    match /report/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+      // لتقييد الكتابة بإيميل أدمن واحد، استبدل السطر اللي فوق بالسطر التالي:
+      // allow write: if request.auth != null && request.auth.token.email == 'ضع-إيميل-الأدمن-هنا';
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
